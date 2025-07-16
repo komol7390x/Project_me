@@ -10,5 +10,5 @@ await connectDB();
 
 // Server listen
 app.listen(PORT, () => {
-  consola.success(`http://localhost:${PORT}`);
+  consola.success(`Runing server: http://localhost:${PORT}`);
 });
