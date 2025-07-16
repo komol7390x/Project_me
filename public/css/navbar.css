@@ -1,0 +1,383 @@
+@import url("https://api.fontshare.com/v2/css?f[]=nunito@200,201,300,301,400,401,500,501,600,601,700,701,800,801,900,901,1,2&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,100,0,0");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,100,0,0");
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Nunito", sans-serif;
+  transition: 0.3s all ease-in-out;
+}
+
+body {
+  background-color: #f5f5f5;
+  color: #6e6d6d;
+}
+
+button,
+span {
+  cursor: pointer;
+}
+
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.navbar {
+  width: 250px;
+  background-color: #fff;
+  flex-shrink: 0;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  gap: 24px;
+  padding: 24px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+.navbar.collapsed {
+  width: 80px;
+}
+
+.navbar.collapsed + main {
+  margin-left: 80px;
+}
+
+.navbar.collapsed .nav-text {
+  display: none;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: normal;
+  align-items: center;
+  padding: 10px;
+  padding-block: 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.nav-item:hover {
+  background-color: #f0f0f0;
+}
+
+.nav-item .material-symbols-rounded,
+.nav-item .material-symbols-outlined {
+  font-size: 24px;
+  color: #3a3061;
+}
+
+.nav-item .nav-text {
+  font-size: 16px;
+  margin-left: 12px;
+  color: #3a3061;
+  font-weight: 500;
+}
+
+.navbar.collapsed .nav-item .nav-text {
+  display: none;
+}
+
+.name {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: normal;
+  color: black;
+}
+
+.name p:first-child {
+  font-weight: bold;
+  font-size: 16px;
+  color: #3a3061;
+}
+
+.name p:last-child {
+  font-size: 12px;
+  color: #666;
+}
+
+.settings,
+.others {
+  display: flex;
+  flex-direction: column;
+  justify-content: normal;
+  align-items: normal;
+  gap: 12px;
+}
+
+.main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.logout {
+  color: #ed5656;
+}
+
+.logout .nav-text {
+  color: #ed5656;
+}
+
+.toggle {
+  background-color: #fff;
+  border-radius: 8px;
+  top: 6%;
+  right: -12px;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #e7e7e7;
+  width: 24px;
+  height: 24px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.current {
+  background-color: #3a3061;
+  color: white;
+}
+
+.current .nav-text,
+.current .material-symbols-rounded {
+  color: white;
+}
+
+hr {
+  border: 1px solid #e7e7e7;
+  border-radius: 99px;
+}
+
+.avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 3px 0 black;
+  object-fit: cover;
+}
+
+.profile {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  position: relative;
+  margin-left: 250px;
+  min-height: 100vh;
+}
+
+/* Profile Dropdown Overlay */
+.profile-dropdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-dropdown-overlay.show {
+  display: flex;
+}
+
+.profile-dropdown-content {
+  background-color: white;
+  border-radius: 12px;
+  padding: 0;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.profile-header {
+  background-color: #3a3061;
+  color: white;
+  padding: 1.5rem;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-header h3 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.close-btn:hover {
+  background-color: rgba(255,255,255,0.2);
+}
+
+.profile-form {
+  padding: 2rem;
+}
+
+.profile-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.profile-form .form-group label {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #3a3061;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.profile-form .form-group input {
+  font-size: 1.4rem;
+  padding: 1rem;
+  border: 2px solid #e7e7e7;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.profile-form .form-group input:focus {
+  outline: none;
+  border-color: #3a3061;
+}
+
+.profile-form .form-group input[readonly] {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.profile-form .auth-btn {
+  background-color: #216a21;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.6rem;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+.profile-form .auth-btn:hover {
+  background-color: #133613;
+}
+
+.profile-stats {
+  padding: 2rem;
+  border-top: 2px solid #eee;
+}
+
+.profile-stats h4 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.6rem;
+  color: #3a3061;
+  text-align: center;
+}
+
+.stats-mini {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.stat-mini {
+  text-align: center;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 2px solid #3a3061;
+}
+
+.stat-mini .stat-number {
+  display: block;
+  font-size: 2.4rem;
+  font-weight: bold;
+  color: #216a21;
+  margin-bottom: 0.5rem;
+}
+
+.stat-mini .stat-label {
+  font-size: 1.2rem;
+  color: #3a3061;
+  font-weight: bold;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .navbar {
+    width: 80px;
+  }
+  
+  main {
+    margin-left: 80px;
+  }
+
+  .navbar .nav-text {
+    display: none;
+  }
+
+  .navbar .nav-item {
+    padding: 10px;
+    justify-content: center;
+  }
+
+  .navbar .nav-item .material-symbols-rounded,
+  .navbar .nav-item .material-symbols-outlined {
+    font-size: 24px;
+  }
+
+  .toggle {
+    display: none;
+  }
+  
+  .profile-dropdown-content {
+    width: 95%;
+    margin: 1rem;
+  }
+  
+  .stats-mini {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+} 
