@@ -3,12 +3,12 @@ import consola from "consola";
 import { connectDB, envConfig } from "./config/index.js";
 
 // PORT
-const PORT = envConfig.port;
+const PORT = +envConfig.port;
 
 // Database'ga ulanishni tekshiruvchi funksiya
 await connectDB();
 
 // Server listen
 app.listen(PORT, () => {
-  consola.success(`Runing server: http://localhost:${PORT}`);
+  console.log(`Runing server: http://localhost:`, PORT);
 });
