@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Todos - Todo App</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/navbar.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&family=Material+Symbols+Rounded&family=Material+Symbols+Sharp&display=swap"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .navbar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 250px;
+        height: 100vh;
+        background: white;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        transition: width 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        padding: 24px;
+        gap: 24px;
+      }
+
+      .navbar.collapsed {
+        width: 80px;
+      }
+
+      .navbar.collapsed .nav-text {
+        display: none;
+      }
+
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .profile-avatar-small {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        border: 2px solid #fff;
+        box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.3);
+      }
+
+      .name {
+        display: flex;
+        flex-direction: column;
+        color: black;
+      }
+
+      .name p {
+        font-size: 12px;
+        margin: 0;
+      }
+
+      .name p:first-child {
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .name p:nth-child(2) {
+        font-size: 12px;
+        color: #666;
+      }
+
+      .name p:nth-child(3) {
+        font-size: 10px;
+        color: #888;
+        margin-top: 2px;
+        font-style: italic;
+      }
+
+      hr {
+        border: 1px solid #e7e7e7;
+        border-radius: 99px;
+        margin: 0;
+      }
+
+      .main,
+      .others {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .main {
+        flex-grow: 1;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        padding-block: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-radius: 16px;
+      }
+
+      .nav-item:hover {
+        background-color: #d9d9d950;
+      }
+
+      .nav-item.current {
+        background-color: #d9d9d950;
+      }
+
+      .nav-item .material-symbols-rounded,
+      .nav-item .material-symbols-outlined {
+        font-size: 24px;
+      }
+
+      .nav-item .nav-text {
+        font-size: 16px;
+      }
+
+      .logout {
+        color: #ed5656;
+      }
+
+      .toggle {
+        background-color: #fff;
+        border-radius: 8px;
+        top: 6%;
+        right: -12px;
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #e7e7e7;
+        cursor: pointer;
+        width: 30px;
+        height: 30px;
+      }
+
+      .main-content {
+        margin-left: 250px;
+        padding: 30px;
+        transition: margin-left 0.3s ease;
+        min-height: 100vh;
+      }
+
+      .main-content.collapsed {
+        margin-left: 80px;
+      }
+
+      .todos-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        animation: fadeInUp 0.6s ease;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .page-header {
+        background: white;
+        border-radius: 25px;
+        padding: 40px;
+        margin-bottom: 30px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .page-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .page-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 15px;
+      }
+
+      .page-description {
+        font-size: 1.2rem;
+        color: #666;
+        font-weight: 500;
+      }
+
+      .user-info-section {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .user-avatar-large {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        font-weight: bold;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      .user-details h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+      }
+
+      .user-details p {
+        color: #666;
+        font-size: 1rem;
+        margin-bottom: 5px;
+      }
+
+      .user-details .description {
+        font-style: italic;
+        color: #888;
+        font-size: 0.9rem;
+      }
+
+      .stats-section {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+      }
+
+      .stat-card {
+        text-align: center;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+      }
+
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #667eea;
+        margin-bottom: 8px;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .todos-section {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .todos-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .todo-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        border-left: 4px solid #e1e5e9;
+      }
+
+      .todo-item.completed {
+        background: #e8f5e8;
+        border-left-color: #28a745;
+      }
+
+      .todo-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .todo-checkbox {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid #667eea;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+      }
+
+      .todo-checkbox.completed {
+        background: #667eea;
+        color: white;
+      }
+
+      .todo-text {
+        flex: 1;
+        font-size: 1rem;
+        color: #333;
+        font-weight: 500;
+      }
+
+      .todo-item.completed .todo-text {
+        text-decoration: line-through;
+        color: #666;
+      }
+
+      .back-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+
+      .back-btn a{
+        text-decoration: none;
+        color: white;
+      }
+
+      .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      }
+
+      .no-todos {
+        text-align: center;
+        padding: 60px 40px;
+        color: #666;
+      }
+
+      .no-todos h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+      }
+
+      @media (max-width: 768px) {
+        .navbar {
+          width: 80px;
+        }
+
+        .navbar .nav-text {
+          display: none;
+        }
+
+        .navbar .nav-item {
+          padding: 10px;
+        }
+
+        .navbar .nav-item .material-symbols-rounded,
+        .navbar .nav-item .material-symbols-outlined {
+          font-size: 24px;
+        }
+
+        .toggle {
+          display: none;
+        }
+
+        .main-content {
+          margin-left: 80px;
+          padding: 20px;
+        }
+
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .user-info-section {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .page-header {
+          padding: 30px 20px;
+        }
+
+        .page-title {
+          font-size: 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Static Navbar -->
+    <nav class="navbar" id="navbar">
+      <section class="profile">
+        <div class="profile-avatar-small" id="navbar-avatar">
+          <!-- Avatar will be set by JavaScript -->
+        </div>
+        <span class="nav-text name">
+          <p id="navbar-name">User</p>
+          <p id="navbar-email">user@example.com</p>
+          <p
+            id="navbar-description"
+            style="font-size: 10px; color: #888; margin-top: 2px"
+          >
+            No description
+          </p>
+        </span>
+      </section>
+      <hr />
+      <section class="main">
+        <div class="nav-item">
+          <span class="material-symbols-rounded"> task_alt </span>
+          <span class="nav-text">Todo</span>
+        </div>
+        <div class="nav-item">
+          <span class="material-symbols-rounded"> person </span>
+          <span class="nav-text">Profile</span>
+        </div>
+        <div class="nav-item current">
+          <span class="material-symbols-rounded"> group </span>
+          <span class="nav-text">Users</span>
+        </div>
+      </section>
+      <hr />
+      <section class="others">
+        <div class="nav-item">
+          <span class="material-symbols-outlined"> settings </span>
+          <span class="nav-text">Sozlamalar</span>
+        </div>
+        <div class="nav-item">
+          <span class="material-symbols-outlined"> help </span>
+          <span class="nav-text">Yordam</span>
+        </div>
+        <div class="logout nav-item" id="logoutBtn">
+          <span class="material-symbols-outlined"> logout </span>
+          <span class="nav-text">Chiqish</span>
+        </div>
+      </section>
+      <button class="toggle" onclick="toggleNavbar()">
+        <span class="material-symbols-outlined"> chevron_left </span>
+      </button>
+    </nav>
+
+    <div class="main-content" id="main-content">
+      <div class="todos-container">
+        <!-- Back Button -->
+        <button class="back-btn">
+          <span class="material-symbols-outlined">arrow_back</span>
+          <a href="/users">Orqaga qaytish</a>
+        </button>
+
+        <!-- Page Header -->
+        <div class="page-header">
+          <h1 class="page-title">Foydalanuvchi Todo'lari</h1>
+          <p class="page-description">
+            Foydalanuvchining barcha todo'larini ko'ring
+          </p>
+        </div>
+
+        <!-- User Info Section -->
+        <div class="user-info-section" id="userInfoSection">
+          <!-- User info will be loaded here -->
+          <div class="user-avatar-large">A</div>
+          <div class="user-details">
+            <h2>Aziz Karimov</h2>
+            <p>aziz@example.com</p>
+            <p class="description">
+              Frontend developer, React va Vue.js da tajribali
+            </p>
+          </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-section">
+          <h3 class="section-title">
+            <span class="material-symbols-rounded">analytics</span>
+            Statistika
+          </h3>
+          <div class="stats-grid" id="statsGrid">
+            <!-- Stats will be loaded here -->
+            <div class="stat-card">
+              <div class="stat-number">5</div>
+              <div class="stat-label">Jami Todo</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">2</div>
+              <div class="stat-label">Bajarilgan</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">3</div>
+              <div class="stat-label">Kutilmoqda</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">40%</div>
+              <div class="stat-label">Bajarilish</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Todos Section -->
+        <div class="todos-section">
+          <h3 class="section-title">
+            <span class="material-symbols-rounded">task_alt</span>
+            Todo'lar
+          </h3>
+          <div class="todos-list" id="todosList">
+            <!-- Todos will be loaded here -->
+            <div class="todo-item completed">
+              <div class="todo-checkbox completed">
+                <span class="material-symbols-rounded">check</span>
+              </div>
+              <div class="todo-text">React komponentini yaratish</div>
+            </div>
+            <div class="todo-item completed">
+              <div class="todo-checkbox completed">
+                <span class="material-symbols-rounded">check</span>
+              </div>
+              <div class="todo-text">React komponentini yaratish</div>
+            </div>
+            <div class="todo-item">
+              <div class="todo-checkbox">
+                <span class="material-symbols-rounded"></span>
+              </div>
+              <div class="todo-text">React komponentini yaratish</div>
+            </div>
+            <div class="todo-item completed">
+              <div class="todo-checkbox completed">
+                <span class="material-symbols-rounded">check</span>
+              </div>
+              <div class="todo-text">React komponentini yaratish</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <script src="../js/auth.js"></script> -->
+    <script>
+      // Navbar toggle functionality
+      function toggleNavbar() {
+        const navbar = document.querySelector(".navbar");
+        const toggleButton = document.querySelector(".toggle");
+        const mainContent = document.getElementById("main-content");
+        const isCollapsed = navbar.classList.contains("collapsed");
+
+        // Toggle the navbar collapse state
+        navbar.classList.toggle("collapsed", !isCollapsed);
+
+        // Update main margin
+        if (isCollapsed) {
+          mainContent.style.marginLeft = "250px";
+          toggleButton.innerHTML =
+            '<span class="material-symbols-outlined">chevron_left</span>';
+        } else {
+          mainContent.style.marginLeft = "80px";
+          toggleButton.innerHTML =
+            '<span class="material-symbols-outlined">chevron_right</span>';
+        }
+      }
+
+      // Logout functionality
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", function () {
+          logout();
+        });
+
+      // Static users data (same as in users.html)
+      const staticUsers = [
+        {
+          name: "Aziz Karimov",
+          email: "aziz@example.com",
+          description: "Frontend developer, React va Vue.js da tajribali",
+          todos: [
+            { id: 1, text: "React komponentini yaratish", completed: true },
+            { id: 2, text: "Vue.js loyihasini tugatish", completed: false },
+            { id: 3, text: "CSS stillarini yaxshilash", completed: true },
+            { id: 4, text: "API integratsiyasini qo'shish", completed: false },
+            { id: 5, text: "Kodni refactor qilish", completed: false },
+          ],
+        },
+        {
+          name: "Malika Yusupova",
+          email: "malika@example.com",
+          description: "UX/UI designer, creative va innovatsion yondashuv",
+          todos: [
+            { id: 1, text: "UI mockup'larini tayyorlash", completed: true },
+            { id: 2, text: "Color palette'ni tanlash", completed: true },
+            { id: 3, text: "Typography'ni o'rnatish", completed: false },
+            { id: 4, text: "Prototype'ni yaratish", completed: false },
+            { id: 5, text: "User feedback'ni o'rganish", completed: false },
+            { id: 6, text: "Design system'ni yaratish", completed: true },
+          ],
+        },
+        {
+          name: "Jasur Toshmatov",
+          email: "jasur@example.com",
+          description: "Backend developer, Node.js va Python mutaxassisi",
+          todos: [
+            { id: 1, text: "Database schema'ni yaratish", completed: true },
+            { id: 2, text: "API endpoint'larini yaratish", completed: true },
+            {
+              id: 3,
+              text: "Authentication system'ni qo'shish",
+              completed: false,
+            },
+            { id: 4, text: "Error handling'ni yaxshilash", completed: false },
+            { id: 5, text: "Unit test'larini yozish", completed: true },
+            { id: 6, text: "Performance optimization", completed: false },
+            { id: 7, text: "Documentation'ni yozish", completed: false },
+          ],
+        },
+        {
+          name: "Dilfuza Rahimova",
+          email: "dilfuza@example.com",
+          description: "Mobile developer, React Native va Flutter mutaxassisi",
+          todos: [
+            { id: 1, text: "React Native app'ni yaratish", completed: true },
+            { id: 2, text: "Flutter widget'larini yaratish", completed: false },
+            {
+              id: 3,
+              text: "Mobile UI/UX dizaynini yaxshilash",
+              completed: true,
+            },
+            {
+              id: 4,
+              text: "Push notification'larini qo'shish",
+              completed: false,
+            },
+          ],
+        },
+        {
+          name: "Shahzod Mirzayev",
+          email: "shahzod@example.com",
+          description: "DevOps engineer, Docker va Kubernetes mutaxassisi",
+          todos: [
+            {
+              id: 1,
+              text: "Docker container'larini yaratish",
+              completed: true,
+            },
+            {
+              id: 2,
+              text: "Kubernetes deployment'ni sozlash",
+              completed: true,
+            },
+            { id: 3, text: "CI/CD pipeline'ni yaratish", completed: false },
+            {
+              id: 4,
+              text: "Monitoring va logging'ni sozlash",
+              completed: false,
+            },
+            { id: 5, text: "Security audit'ni o'tkazish", completed: true },
+          ],
+        },
+        {
+          name: "Zarina Karimova",
+          email: "zarina@example.com",
+          description: "QA engineer, testing va automation mutaxassisi",
+          todos: [
+            { id: 1, text: "Test plan'ni yaratish", completed: true },
+            { id: 2, text: "Automation test'larini yozish", completed: false },
+            { id: 3, text: "Manual test'larini o'tkazish", completed: true },
+            { id: 4, text: "Bug report'larini yozish", completed: false },
+            { id: 5, text: "Test documentation'ni yozish", completed: false },
+          ],
+        },
+        {
+          name: "Bekzod Umarov",
+          email: "bekzod@example.com",
+          description: "Data scientist, ML va AI mutaxassisi",
+          todos: [
+            {
+              id: 1,
+              text: "Data preprocessing'ni amalga oshirish",
+              completed: true,
+            },
+            { id: 2, text: "ML model'ini yaratish", completed: true },
+            { id: 3, text: "Model'ni train qilish", completed: false },
+            { id: 4, text: "Model performance'ni o'lchash", completed: false },
+            {
+              id: 5,
+              text: "AI algorithm'larini optimizatsiya qilish",
+              completed: false,
+            },
+          ],
+        },
+        {
+          name: "Nilufar Akbarova",
+          email: "nilufar@example.com",
+          description: "Product manager, agile va scrum mutaxassisi",
+          todos: [
+            { id: 1, text: "Product roadmap'ni yaratish", completed: true },
+            { id: 2, text: "Sprint planning'ni o'tkazish", completed: true },
+            {
+              id: 3,
+              text: "Stakeholder meeting'larini o'tkazish",
+              completed: false,
+            },
+            { id: 4, text: "User story'larini yozish", completed: false },
+            {
+              id: 5,
+              text: "Agile process'larini yaxshilash",
+              completed: false,
+            },
+          ],
+        },
+        {
+          name: "Rustam Kadirov",
+          email: "rustam@example.com",
+          description: "Full-stack developer, MERN stack mutaxassisi",
+          todos: [
+            { id: 1, text: "MongoDB database'ni sozlash", completed: true },
+            { id: 2, text: "Express.js API'ni yaratish", completed: true },
+            { id: 3, text: "React frontend'ni yaratish", completed: false },
+            {
+              id: 4,
+              text: "Node.js server'ni deploy qilish",
+              completed: false,
+            },
+            { id: 5, text: "JWT authentication'ni qo'shish", completed: true },
+            {
+              id: 6,
+              text: "Real-time chat funksiyasini qo'shish",
+              completed: false,
+            },
+          ],
+        },
+        {
+          name: "Gulnora Ismoilova",
+          email: "gulnora@example.com",
+          description: "UI/UX designer, Figma va Adobe XD mutaxassisi",
+          todos: [
+            { id: 1, text: "Figma design system'ni yaratish", completed: true },
+            { id: 2, text: "Adobe XD prototype'ni yaratish", completed: false },
+            { id: 3, text: "Color scheme'ni tanlash", completed: true },
+            { id: 4, text: "Typography'ni o'rnatish", completed: true },
+            { id: 5, text: "Icon set'ni yaratish", completed: false },
+            { id: 6, text: "User flow diagram'ni yaratish", completed: false },
+            { id: 7, text: "Design review'ni o'tkazish", completed: false },
+          ],
+        },
+        {
+          name: "Farrukh Tursunov",
+          email: "farrukh@example.com",
+          description:
+            "Cybersecurity specialist, penetration testing mutaxassisi",
+          todos: [
+            { id: 1, text: "Security audit'ni o'tkazish", completed: true },
+            {
+              id: 2,
+              text: "Penetration testing'ni amalga oshirish",
+              completed: false,
+            },
+            {
+              id: 3,
+              text: "Vulnerability assessment'ni yaratish",
+              completed: true,
+            },
+            { id: 4, text: "Security policy'ni yozish", completed: false },
+            {
+              id: 5,
+              text: "Incident response plan'ni yaratish",
+              completed: false,
+            },
+            { id: 6, text: "Security training'ni o'tkazish", completed: true },
+          ],
+        },
+        {
+          name: "Madina Karimova",
+          email: "madina@example.com",
+          description:
+            "Content creator, video editing va animation mutaxassisi",
+          todos: [
+            { id: 1, text: "Video script'ni yozish", completed: true },
+            {
+              id: 2,
+              text: "Video shooting'ni amalga oshirish",
+              completed: true,
+            },
+            { id: 3, text: "Video editing'ni qilish", completed: false },
+            { id: 4, text: "Animation'ni yaratish", completed: false },
+            { id: 5, text: "Sound design'ni qo'shish", completed: false },
+            { id: 6, text: "Video'ni publish qilish", completed: false },
+            { id: 7, text: "Analytics'ni kuzatish", completed: false },
+          ],
+        },
+      ];
+
+      // Load user todos
+      function loadUserTodos() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userEmail = urlParams.get("email");
+
+        if (!userEmail) {
+          window.location.href = "users.html";
+          return;
+        }
+
+        const user = staticUsers.find((u) => u.email === userEmail);
+
+        if (!user) {
+          window.location.href = "users.html";
+          return;
+        }
+
+        // Load user info
+        const userInfoSection = document.getElementById("userInfoSection");
+        userInfoSection.innerHTML = `
+                <div class="user-avatar-large">
+                    ${user.name ? user.name.charAt(0).toUpperCase() : "U"}
+                </div>
+                <div class="user-details">
+                    <h2>${user.name}</h2>
+                    <p>${user.email}</p>
+                    <p class="description">${user.description}</p>
+                </div>
+            `;
+
+        // Load stats
+        const userTodos = user.todos || [];
+        const completedTodos = userTodos.filter(
+          (todo) => todo.completed
+        ).length;
+        const pendingTodos = userTodos.length - completedTodos;
+        const completionRate =
+          userTodos.length > 0
+            ? Math.round((completedTodos / userTodos.length) * 100)
+            : 0;
+
+        const statsGrid = document.getElementById("statsGrid");
+        statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${userTodos.length}</div>
+                    <div class="stat-label">Jami Todo</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${completedTodos}</div>
+                    <div class="stat-label">Bajarilgan</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${pendingTodos}</div>
+                    <div class="stat-label">Kutilmoqda</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${completionRate}%</div>
+                    <div class="stat-label">Bajarilish</div>
+                </div>
+            `;
+
+        // Load todos
+        const todosList = document.getElementById("todosList");
+        if (userTodos.length === 0) {
+          todosList.innerHTML = `
+                    <div class="no-todos">
+                        <h3>Todo'lar yo'q</h3>
+                        <p>Bu foydalanuvchida hali hech qanday todo mavjud emas</p>
+                    </div>
+                `;
+        } else {
+          todosList.innerHTML = userTodos
+            .map(
+              (todo) => `
+                    <div class="todo-item ${todo.completed ? "completed" : ""}">
+                        <div class="todo-checkbox ${
+                          todo.completed ? "completed" : ""
+                        }">
+                            ${
+                              todo.completed
+                                ? '<span class="material-symbols-rounded">check</span>'
+                                : ""
+                            }
+                        </div>
+                        <div class="todo-text">${todo.text}</div>
+                    </div>
+                `
+            )
+            .join("");
+        }
+      }
+
+      // Go back to users page
+      // function goBack() {
+      //     window.location.href = 'users.html';
+      // }
+
+      // Initialize page
+      // document.addEventListener('DOMContentLoaded', function() {
+      //     loadUserTodos();
+      // });
+    </script>
+  </body>
+</html>
