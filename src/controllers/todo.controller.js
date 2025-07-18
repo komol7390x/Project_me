@@ -1,5 +1,5 @@
 import consola from "consola";
-
+import {todoSchema} from '../validators/todo.schema.js'
 export class TodoController {
   constructor(todoModel) {
     this.todoModel = todoModel;
@@ -16,14 +16,15 @@ export class TodoController {
   async createTodo(req, res) {
     try {
       const body = req.body;
-
-      console.log("this", this);
-
-      console.log("body", body);
-
+      const {error}=todoSchema.validate(body);
+      if(error){
+        return res.status(400).json({
+          statusCode:400,
+          message:'Invalid validate'
+        })
+      }
       const createdTodo = await this.todoModel.create(body);
-
-      res.status(201).json(createdTodo);
+      return res.status(201).json(createdTodo);
     } catch (error) {
       consola.error(error.message);
       res.status(500).json({
@@ -40,6 +41,14 @@ export class TodoController {
    */
   async updateTodo(req, res){
     try {
+      const body=req.body
+      const {error}=todoSchema.validate(body);
+      if(error){
+        return res.status(400).json({
+          statusCode:400,
+          message:'Invalid validate'
+        })
+      }
       const id=req.params.id
       const result=await this.todoModel.findByIdAndUpdate(id,{done: true});
       if(!result){
