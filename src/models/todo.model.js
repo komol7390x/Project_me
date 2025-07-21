@@ -18,4 +18,4 @@ const todoSchema = new Schema(
   }
 );
 
-export const Todo = model("Todo", todoSchema);
+export const Todo = model("todo", todoSchema);

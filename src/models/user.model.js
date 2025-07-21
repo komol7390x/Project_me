@@ -15,4 +15,4 @@ const userSchema = new Schema(
   }
 );
 
-export const Todo = model("users", userSchema);
+export const User = model("users", userSchema);
