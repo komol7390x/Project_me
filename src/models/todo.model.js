@@ -17,5 +17,5 @@ const todoSchema = new Schema(
     versionKey: false,
   }
 );
-
 export const Todo = model("todo", todoSchema);
+

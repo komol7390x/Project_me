@@ -1,8 +1,9 @@
-import BaseController from './index.js';
+import BaseController from './basic.controller.js';
 import {Todo} from '../models/todo.model.js'
 
-class TodoController extends BaseController{
+export class TodoController extends BaseController{
     constructor(){
         super(Todo)
     }
 }
+
