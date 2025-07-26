@@ -1,7 +1,8 @@
 import { isValidObjectId } from "mongoose";
 import { successRes } from '../utils/success-create.js'
 import { AppError } from "../errors/AppError.js";
-class BaseController {
+
+export class BaseController {
     constructor(model) {
         this.model = model
     }
@@ -62,3 +63,4 @@ class BaseController {
         return admin
     }
 }
+
