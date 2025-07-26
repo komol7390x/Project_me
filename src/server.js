@@ -2,11 +2,17 @@ import express from 'express'
 import config from './config/server.config.js'
 import { connectDB } from './databases/server.database.js'
 import Router from './routers/index.route.js'
+import { globalError } from './errors/global-error-handle.js'
+import cookieParser from 'cookie-parser'
+
 await connectDB()
 const server = express()
 
 server.use(express.json())
+server.use(cookieParser())
+
 server.use('/', Router)
+server.use(globalError)
 
 const PORT = +config.PORT || 5050
 

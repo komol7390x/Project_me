@@ -5,13 +5,15 @@
   "type": "module",
   "scripts": {
     "start": "nodemon src/server.js",
-    "superadmin":"node src/helper/super-admin-add.js"
+    "superadmin": "node src/helper/super-admin-add.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
