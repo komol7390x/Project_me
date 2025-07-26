@@ -2,7 +2,7 @@ import { AppError } from '../errors/AppError.js'
 import { Admin } from '../models/index.schema.js'
 import Crypt from '../utils/Crypt.js'
 import { successRes } from '../utils/success-create.js'
-import { BaseController } from './index.controller.js'
+import { BaseController } from './base.controller.js'
 import Token from '../utils/Token.js'
 
 class AdminController extends BaseController {
