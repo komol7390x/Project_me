@@ -13,8 +13,6 @@ export class UserController extends BaseController {
     createUser = (...role) => {
         return async (req, res, next) => {
             try {
-                console.log(4);
-
                 const { username, email, password } = req.body
                 //username bor yoki yoqligini aniqlavomiza!
                 const existsUsername = await this.modelUser.findOne({ username })

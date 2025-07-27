@@ -8,7 +8,7 @@ class adminValidate {
         return Joi.object({
             username: Joi.string().required().min(3).pattern(usernameReg).max(100),
             email: Joi.string().required().pattern(emailReg).min(3).max(100),
-            hashPassword: Joi.string().required().min(3),
+            password: Joi.string().required().min(3),
             isActive: Joi.boolean(),
             role: Joi.valid('ADMIN').optional(),
         })
@@ -18,7 +18,7 @@ class adminValidate {
         return Joi.object({
             username: Joi.string().optional().min(3).pattern(usernameReg).max(100),
             email: Joi.string().optional().pattern(emailReg).min(3).max(100),
-            hashPassword: Joi.string().optional().min(3),
+            password: Joi.string().optional().min(3),
             isActive: Joi.boolean(),
         })
     }
