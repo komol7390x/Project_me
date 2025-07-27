@@ -5,4 +5,4 @@ const categorySchema = new Schema({
     url: { type: String, required: true },
 }, { timestamps: true, versionKey: false })
 
-export const category = model('categories', categorySchema)
+export const Category = model('categories', categorySchema)
