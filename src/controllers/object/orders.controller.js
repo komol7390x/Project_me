@@ -1,5 +1,5 @@
 import { Order } from '../../models/index.schema.js'
-import { BaseController } from './base.controller.js';
+import { BaseController } from '../base/base.controller.js';
 
 class OrderController extends BaseController {
     constructor() {
