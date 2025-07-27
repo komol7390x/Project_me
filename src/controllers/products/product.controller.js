@@ -1,4 +1,4 @@
-import { Product } from '../models/index.schema.js'
+import { Product } from '../../models/index.schema.js'
 import { BaseController } from './base.controller.js';
 
 class ProductController extends BaseController {

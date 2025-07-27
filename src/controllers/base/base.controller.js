@@ -1,6 +1,6 @@
 import { isValidObjectId } from "mongoose";
-import { successRes } from '../utils/success-create.js'
-import { AppError } from "../errors/AppError.js";
+import { successRes } from '../../utils/success-create.js'
+import { AppError } from "../../errors/AppError.js";
 
 export class BaseController {
     constructor(model) {
@@ -25,7 +25,7 @@ export class BaseController {
     getByID = async (req, res, next) => {
         try {
             const id = req.params.id
-            const result = await this.checkByID(id)
+            const result = await BaseController.checkByID(id, this.model)
             successRes(res, result)
         } catch (error) {
             next(error)
@@ -34,7 +34,7 @@ export class BaseController {
     update = async (req, res, next) => {
         try {
             const id = req.params.id
-            await this.checkByID(id)
+            await this.checkByID(id, this.model)
             const result = this.model.findByIdAndUpdate(id, req.body)
             successRes(res, result)
         } catch (error) {
@@ -44,7 +44,7 @@ export class BaseController {
     delete = async (req, res, next) => {
         try {
             const id = req.params.id
-            await this.checkByID(id)
+            await this.checkByID(id, this.model)
             const result = this.model.findByIdAndDelete(id, req.body)
             successRes(res, result)
         } catch (error) {
@@ -52,10 +52,10 @@ export class BaseController {
         }
     }
     static checkByID = async (id, schema) => {
-        if (isValidObjectId(id)) {
+        if (!isValidObjectId(id)) {
             throw new AppError('Invalid ObjectId', 400)
         }
-        const model = schema || this.model
+        const model = schema
         const admin = await model.findById(id);
         if (!admin) {
             throw new AppError('Not found user', 404)

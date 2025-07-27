@@ -8,7 +8,8 @@ const sallerSchema = new Schema({
     phoneNumber: { type: String, unique: true, required: true, minlength: 10 },
     isActive: { type: Boolean, default: false },
     image: { type: String, required: true, minlength: 3 },
-    adress: { type: String, minlength: 3 }
+    adress: { type: String, minlength: 3 },
+    role: { type: String, enum: ['Saller'], default: 'Saller' }
 }, { timestamps: true, versionKey: false })
 
 export const Saller = model('sallers', sallerSchema)

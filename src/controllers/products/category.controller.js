@@ -1,4 +1,4 @@
-import { Category } from '../models/index.schema.js'
+import { Category } from '../../models/index.schema.js'
 import { BaseController } from './base.controller.js';
 
 class CategoryController extends BaseController {

@@ -6,7 +6,8 @@ const CustomerSchema = new Schema({
     hashPassword: { type: String, required: true, minlength: 8, maxlength: 100 },
     fullName: { type: String, unique: true, required: true, minlength: 3, maxlength: 100 },
     phoneNumber: { type: String, unique: true, required: true, minlength: 10 },
-    isActive: { type: Boolean, default: false }
+    isActive: { type: Boolean, default: false },
+    role: { type: String, enum: ['Customer'], default: 'Customer' }
 }, { timestamps: true, versionKey: false })
 
 export const Customer = model('customers', CustomerSchema)

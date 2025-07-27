@@ -9,7 +9,7 @@ class Token {
     }
     refreshToken = (payload) => {
         return jwt.sign(payload, config.TOKEN.REFRESH_KEY, {
-            expiresIn: config.TOKEN.ACCESS_TIME
+            expiresIn: config.TOKEN.REFRESH_TIME
         })
     }
 

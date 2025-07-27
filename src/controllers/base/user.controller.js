@@ -1,41 +1,44 @@
-import { AppError } from '../errors/AppError.js'
-import { Admin } from '../models/index.schema.js'
-import Crypt from '../utils/Crypt.js'
-import { successRes } from '../utils/success-create.js'
+import { AppError } from '../../errors/AppError.js'
+import Crypt from '../../utils/Crypt.js'
+import { successRes } from '../../utils/success-create.js'
 import { BaseController } from './base.controller.js'
-import Token from '../utils/Token.js'
-import config from '../config/server.config.js'
+import Token from '../../utils/Token.js'
+import config from '../../config/server.config.js'
 
-class AdminController extends BaseController {
-    constructor() {
-        super(Admin)
+export class UserController extends BaseController {
+    constructor(modelUser) {
+        super(modelUser)
+        this.modelUser = modelUser
     }
-    createAdmin = async (req, res, next) => {
-        try {
-            const { username, email, password } = req.body
-            //username bor yoki yoqligini aniqlavomiza!
-            const existsUsername = await Admin.findOne({ username })
-            if (existsUsername) {
-                throw new AppError(`this ${username} username already added`)
+    createUser = (...role) => {
+        return async (req, res, next) => {
+            try {
+                const { username, email, password } = req.body
+                //username bor yoki yoqligini aniqlavomiza!
+                const existsUsername = await this.modelUser.findOne({ username })
+                if (existsUsername) {
+                    throw new AppError(`this ${username} username already added`)
+                }
+                //email bor yoki yoqligini aniqlavomiza!
+                const existsEmail = await this.modelUser.findOne({ email })
+                if (existsEmail) {
+                    throw new AppError(`this ${username} email already added`)
+                }
+                //Faqat ruxsat etilgan foydalanuvchilar create qila olishini aniqlanadi!
+                if (!role.includes(req.user.role)) {
+                    throw new AppError('Not access create new admin', 403)
+                }
+
+                //paroli hash lanadi bcrypt orqali
+                req.body.hashPassword = await Crypt.encrypt(password)
+                //req.body paroli o'chirib tashlanadi
+                delete req.body.password
+                //create qilinvoti databasaga
+                const result = await this.modelUser.create(req.body)
+                successRes(res, result, 201)
+            } catch (error) {
+                next(error)
             }
-            //email bor yoki yoqligini aniqlavomiza!
-            const existsEmail = await Admin.findOne({ email })
-            if (existsEmail) {
-                throw new AppError(`this ${username} email already added`)
-            }
-            //SUPERADMIN create qilvotganini aniqlavomiza!
-            if (req.user.role !== 'SUPERADMIN') {
-                throw new AppError('Not access create new admin', 403)
-            }
-            //paroli hash lavomiza bcrypt orqali
-            const hashPassword = await Crypt.encrypt(password)
-            //req.body parili o'chirib tashlavoti
-            delete req.body.password
-            //create qilinvoti databasaga
-            const result = await Admin.create(...req.body, hashPassword)
-            successRes(res, result, 201)
-        } catch (error) {
-            next(error)
         }
     }
 
@@ -43,19 +46,20 @@ class AdminController extends BaseController {
         try {
             const { email, password } = req.body;
             //email bor yoki yoqligini aniqlavomiza!
-            const admin = await Admin.findOne({ email })
-            if (!admin) {
+            const user = await this.modelUser.findOne({ email })
+            if (!user) {
                 throw new AppError('Email or password incorrect', 401)
             }
             //parol t'ogri ekanligini aniqlavomiza!
-            const hashPassword = await Crypt.decrypt(password, admin.hashPassword);
+            const hashPassword = await Crypt.decrypt(password, user.hashPassword);
             if (!hashPassword) {
                 throw new AppError('Email or password incorrect', 401)
             }
             // token ga data bervomiza
             const payload = {
-                id: admin._id, isActive: admin.isActive, role: admin.role
+                id: user._id, isActive: user.isActive, role: user.role
             }
+
             //access token ovomiza
             const access = Token.accessToken(payload);
             //refresh token ovomiza
@@ -65,7 +69,7 @@ class AdminController extends BaseController {
             //return qilinvoti frontend ga
             return successRes(res, {
                 token: access,
-                data: admin
+                data: user
             })
 
         } catch (error) {
@@ -103,10 +107,10 @@ class AdminController extends BaseController {
     }
     updateAdmin = async (req, res, next) => {
         try {
-            // id boyicha Admin qidiramiza
+            // id boyicha user qidiramiza
             const id = req.params?.id
-            const admin = await BaseController.checkByID(id, Admin);
-            if (!admin) {
+            const user = await BaseController.checkByID(id, Admin);
+            if (!user) {
                 throw new AppError('Not found user', 404)
             }
             //email va username bor tekshiramiza agar bor bolsa Error ga otib yubormiza
@@ -119,17 +123,17 @@ class AdminController extends BaseController {
             if (existsUsername) {
                 throw new AppError(`This ${username} alread added`)
             }
-            let hashPassword = admin.hashPassword
+            let hashPassword = user.hashPassword
             if (password) {
-                if (req.user.role !== admin.role) {
+                if (req.user.role !== user.role) {
                     //Paroli faqat Admin update qila olish kerak
-                    throw new AppError('Nor access to change password for admin', 403)
+                    throw new AppError('Nor access to change password for user', 403)
                 }
-                hashPassword = await Crypt.encrypt(password)
+                req.body.hashPassword = await Crypt.encrypt(password)
                 //eski paroli delete qilib tashaymiza
                 delete req.body.password
             }
-            const updateAdmin = await Admin.findOneAndUpdate(id, ...req.body, hashPassword, { new: true })
+            const updateAdmin = await Admin.findOneAndUpdate(id, req.body, { new: true })
             return successRes(res, updateAdmin)
         } catch (error) {
             next(error)
@@ -158,7 +162,7 @@ class AdminController extends BaseController {
             next(error)
         }
     }
-    static checkToken = async (refresh) => {
+    checkToken = async (refresh) => {
         //Refresh tokeni bor yoqligini tekshirmiza
         if (!refresh) {
             throw new AppError('Authorization error', 401)
@@ -169,12 +173,10 @@ class AdminController extends BaseController {
             throw new AppError('Refresh token expire', 401)
         }
         // token ichidagi id boyicha admin qidiramiza
-        const admin = await Admin.findById(verifyToken.id)
-        if (!admin) {
+        const user = await this.modelUser.findById(verifyToken.id)
+        if (!user) {
             throw new AppError('Forbiden user', 403)
         }
-        return admin
+        return user
     }
 }
-
-export default new AdminController();

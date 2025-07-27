@@ -11,7 +11,7 @@ const server = express()
 server.use(express.json())
 server.use(cookieParser())
 
-server.use('/', Router)
+server.use('/api', Router)
 server.use(globalError)
 
 const PORT = +config.PORT || 5050
