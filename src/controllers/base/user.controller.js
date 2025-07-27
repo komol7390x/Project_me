@@ -26,7 +26,7 @@ export class UserController extends BaseController {
                 }
                 //Faqat ruxsat etilgan foydalanuvchilar create qila olishini aniqlanadi!
                 if (!role.includes(req.user.role)) {
-                    throw new AppError('Not access create new admin', 403)
+                    throw new AppError(`Not access create new ${role}`, 403)
                 }
 
                 //paroli hash lanadi bcrypt orqali
@@ -81,10 +81,10 @@ export class UserController extends BaseController {
         try {
             //cookie ichidagi refresh tokeni tekshiramiza tayor funksiya orqali
             const refresh = req.cookies?.refreshToken
-            const admin = await this.checkToken(refresh)
+            const user = await this.checkToken(refresh)
             // Yangi Token ga payload bermiza
             const payload = {
-                id: admin._id, role: admin.role, isActive: admin.isActive
+                id: user._id, role: user.role, isActive: user.isActive
             }
             const access = Token.accessToken(payload)
             successRes(res, access)
@@ -105,47 +105,48 @@ export class UserController extends BaseController {
             next(error)
         }
     }
-    updateAdmin = async (req, res, next) => {
+    updateUser = (...role) => {
+        return async (req, res, next) => {
+            try {
+                // id boyicha user qidiramiza
+                const id = req.params?.id
+                const user = await BaseController.checkByID(id, this.modelUser);
+                if (!user) {
+                    throw new AppError('Not found user', 404)
+                }
+                //email va username bor tekshiramiza agar bor bolsa Error ga otib yubormiza
+                const { email, password, username } = req.body
+                const existsEmail = await this.modelUser.findOne({ email })
+                if (existsEmail) {
+                    throw new AppError(`This ${email} alread added`)
+                }
+                const existsUsername = await this.modelUser.findOne({ username })
+                if (existsUsername) {
+                    throw new AppError(`This ${username} alread added`)
+                }
+                if (password) {
+                    if (!role.includes(req.user.role)) {
+                        //Paroli faqat user update qila olish kerak
+                        throw new AppError(`Not access to change password for ${this.model}`, 403)
+                    }
+                    req.body.hashPassword = await Crypt.encrypt(password)
+                    //eski paroli delete qilib tashaymiza
+                    delete req.body.password
+                }
+                const updateUser = await this.modelUser.findOneAndUpdate(id, req.body, { new: true })
+                return successRes(res, updateUser)
+            } catch (error) {
+                next(error)
+            }
+        }
+    }
+
+    updateUserPassword = async (req, res, next) => {
         try {
             // id boyicha user qidiramiza
             const id = req.params?.id
             const user = await BaseController.checkByID(id, Admin);
             if (!user) {
-                throw new AppError('Not found user', 404)
-            }
-            //email va username bor tekshiramiza agar bor bolsa Error ga otib yubormiza
-            const { email, password, username } = req.body
-            const existsEmail = await Admin.findOne({ email })
-            if (existsEmail) {
-                throw new AppError(`This ${email} alread added`)
-            }
-            const existsUsername = await Admin.findOne({ username })
-            if (existsUsername) {
-                throw new AppError(`This ${username} alread added`)
-            }
-            let hashPassword = user.hashPassword
-            if (password) {
-                if (req.user.role !== user.role) {
-                    //Paroli faqat Admin update qila olish kerak
-                    throw new AppError('Nor access to change password for user', 403)
-                }
-                req.body.hashPassword = await Crypt.encrypt(password)
-                //eski paroli delete qilib tashaymiza
-                delete req.body.password
-            }
-            const updateAdmin = await Admin.findOneAndUpdate(id, req.body, { new: true })
-            return successRes(res, updateAdmin)
-        } catch (error) {
-            next(error)
-        }
-    }
-
-    updateAdminPassword = async (req, res, next) => {
-        try {
-            // id boyicha Admin qidiramiza
-            const id = req.params?.id
-            const admin = await BaseController.checkByID(id, Admin);
-            if (!admin) {
                 throw new AppError('Not found user', 404)
             }
             const { oldPassword, newPassword } = req.body

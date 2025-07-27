@@ -14,6 +14,7 @@ export default {
     SUPERADMIN: {
         email: process.env.SUPERADMIN_EMAIL,
         password: process.env.SUPERADMIN_PASSWORD,
-        username: process.env.SUPERADMIN_USERNAME
+        username: process.env.SUPERADMIN_USERNAME,
+        role: process.env.SUPERADMIN_ROLE
     }
 }

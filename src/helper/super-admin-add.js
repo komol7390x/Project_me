@@ -17,7 +17,7 @@ import Crypt from '../utils/Crypt.js'
             username: config.SUPERADMIN.username,
             email: config.SUPERADMIN.email,
             hashPassword,
-            role: 'SUPERADMIN'
+            role: config.SUPERADMIN.role
         }
         await Admin.create(admin)
         console.log('Admin is created :)\nDatabase is disconnect');
