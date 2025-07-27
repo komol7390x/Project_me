@@ -1,7 +1,7 @@
 import config from '../config/server.config.js'
 import { connectDB } from '../databases/server.database.js'
 import { disconnect } from 'mongoose'
-import { Admin } from '../models/admin.schema.js'
+import { Admin } from '../models/users/admin.schema.js'
 import Crypt from '../utils/Crypt.js'
 
 (async function () {
