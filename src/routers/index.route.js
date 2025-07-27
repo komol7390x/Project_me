@@ -6,7 +6,7 @@ import categoryRouter from './object/category.route.js'
 import imageRouter from './object/image.route.js'
 import orderRouter from './object/order.route.js'
 import productRouter from './object/product.route.js'
-
+import { pageError } from "../errors/page-not-found.js";
 const router = Router()
 
 router
@@ -16,5 +16,7 @@ router
     .use('/image', imageRouter)
     .use('/order', orderRouter)
     .use('/product', productRouter)
+
+    .use(pageError)
 
 export default router
