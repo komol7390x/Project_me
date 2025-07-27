@@ -1,4 +1,4 @@
-import { AppError } from "../errors/AppError";
+import { AppError } from "../errors/AppError.js";
 
 export const RoleGuard = (...roles) => {
     return async (req, _res, next) => {

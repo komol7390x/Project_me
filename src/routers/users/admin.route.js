@@ -1,10 +1,11 @@
 import { Router } from "express";
 import controller from "../../controllers/user/admin.controller.js";
 import config from '../../config/server.config.js'
+import middleware from '../../middleware/users/admin.middleware.js'
 const router = Router()
 
 router
-    .post('/', controller.createUser(config.SUPERADMIN.role))
+    .post('/', middleware.post, controller.createUser(config.SUPERADMIN.role))
     .post('/signin', controller.signIn)
     .post('/token', controller.newToken)
     .post('/signout', controller.signOut)

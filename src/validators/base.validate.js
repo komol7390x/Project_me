@@ -1,4 +1,4 @@
-import AppError from '../errors/AppError.js'
+import { AppError } from '../errors/AppError.js'
 
 export const validate = (SchemaValid) => {
     return (req, res, next) => {
