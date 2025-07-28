@@ -18,9 +18,9 @@ export default {
         role: process.env.SUPERADMIN_ROLE
     },
     GMAIL: {
-        MAIL_HOST: process.env.MAIL_HOST,
-        MAIL_PORT: process.env.MAIL_PORT,
-        MAIL_USER: process.env.MAIL_USER,
-        MAIL_PASSWORD: process.env.MAIL_PASSWORD
+        HOST: process.env.MAIL_HOST,
+        PORT: process.env.MAIL_PORT,
+        USER: process.env.MAIL_USER,
+        PASS: process.env.MAIL_PASSWORD
     }
 }
