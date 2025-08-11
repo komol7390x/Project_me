@@ -1,0 +1,6 @@
+export const Role={
+    SUPERADMIN:'SUPERADMIN',
+    ADMIN:'ADMIN',
+    SALLER:'SALLER',
+    CUSTOMER:'CUSTOMER'
+}
