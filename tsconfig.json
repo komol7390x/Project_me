@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    /* Module settings */
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolvePackageJsonExports": true,
+
+    /* Decorators and metadata */
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+
+    /* Interop */
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    /* Compilation strictness */
+    "isolatedModules": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+
+    /* Output */
+    "declaration": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+
+    /* Language target */
+    "target": "ES2023",
+
+    /* Relaxed checks (optional) */
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "noFallthroughCasesInSwitch": false
+  },
+   "include": ["src/**/*.ts", "src/**/*.d.ts"]
+}
